@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Florida B.E.S.T. ELA.6.R.1.3 - Author's Point of View Lab</title>
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-hover: #334155;
+      --accent-purple: #8b5cf6;
+      --accent-indigo: #6366f1;
+      --accent-amber: #d97706;
+      --accent-emerald: #059669;
+      --accent-rose: #e11d48;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .header-banner {
+      background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+      padding: 24px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .header-badge {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .header-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-top: 6px;
+    }
+
+    .header-subtitle {
+      font-size: 1rem;
+      color: #e0e7ff;
+    }
+
+    .layout-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 1024px) {
+      .layout-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .card-title .icon {
+      font-size: 1.4rem;
+    }
+
+    /* Canvas Player Styling */
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      background: #000000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 280px;
+    }
+
+    .player-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #090d16;
+      padding: 12px 16px;
+    }
+
+    .btn {
+      background: var(--accent-purple);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card-hover);
+      color: var(--text-main);
+    }
+
+    .progress-bar-wrap {
+      flex: 1;
+      height: 8px;
+      background: #334155;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-purple), var(--accent-indigo));
+      border-radius: 4px;
+      transition: width 0.1s linear;
+    }
+
+    .time-display {
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      min-width: 80px;
+      text-align: right;
+    }
+
+    .chapter-pills {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .chapter-pill {
+      background: var(--bg-card-hover);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      white-space: nowrap;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .chapter-pill:hover, .chapter-pill.active {
+      background: var(--accent-purple);
+      color: white;
+      border-color: var(--accent-purple);
+    }
+
+    /* Reading Passage Box */
+    .passage-box {
+      background: #0f172a;
+      padding: 20px;
+      border-radius: 12px;
+      border-left: 4px solid var(--accent-purple);
+      max-height: 400px;
+      overflow-y: auto;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: #cbd5e1;
+    }
+
+    .passage-box p {
+      margin-bottom: 14px;
+    }
+
+    .highlight-pov {
+      background: rgba(139, 92, 246, 0.2);
+      border-bottom: 2px solid var(--accent-purple);
+      color: #ddd6fe;
+      padding: 2px 4px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .highlight-pov:hover {
+      background: rgba(139, 92, 246, 0.4);
+    }
+
+    .pov-tag {
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .tag-first-person {
+      background: rgba(139, 92, 246, 0.3);
+      color: #c4b5fd;
+      border: 1px solid #8b5cf6;
+    }
+
+    /* Matrix / Organizer */
+    .organizer-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .organizer-card {
+      background: var(--bg-card-hover);
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      font-size: 0.85rem;
+    }
+
+    .organizer-card h5 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--accent-purple);
+      margin-bottom: 6px;
+    }
+
+    /* Quiz Styling */
+    .quiz-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      background: var(--bg-card-hover);
+      padding: 12px 16px;
+      border-radius: 10px;
+    }
+
+    .score-badge {
+      background: var(--accent-emerald);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .question-card {
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .question-text {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 16px;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 12px 16px;
+      border-radius: 8px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-purple);
+    }
+
+    .option-btn.correct {
+      background: rgba(5, 150, 105, 0.2) !important;
+      border-color: var(--accent-emerald) !important;
+      color: #6ee7b7 !important;
+    }
+
+    .option-btn.incorrect {
+      background: rgba(225, 29, 72, 0.2) !important;
+      border-color: var(--accent-rose) !important;
+      color: #fca5a5 !important;
+    }
+
+    .rationale-box {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      display: none;
+      line-height: 1.6;
+    }
+
+    .rationale-box.visible {
+      display: block;
+    }
+
+    .rationale-box.correct {
+      background: rgba(5, 150, 105, 0.15);
+      border: 1px solid var(--accent-emerald);
+      color: #a7f3d0;
+    }
+
+    .rationale-box.incorrect {
+      background: rgba(225, 29, 72, 0.15);
+      border: 1px solid var(--accent-rose);
+      color: #fecdd3;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header-banner">
+    <div>
+      <span class="header-badge">Florida B.E.S.T. Standard ELA.6.R.1.3</span>
+      <h1 class="header-title">Author's Point of View Lab</h1>
+      <p class="header-subtitle">Analyze how an author develops the narrator's perspective through thoughts, word choices, and limited perception</p>
+    </div>
+    <div style="text-align: right;">
+      <div style="font-size: 0.85rem; color: #e0e7ff;">Target Benchmark</div>
+      <div style="font-weight: 700; font-size: 1.1rem; color: #ffffff;">ELA.6.R.1.3 Point of View Analysis</div>
+    </div>
+  </header>
+
+  <div class="layout-grid">
+    
+    <!-- LEFT COLUMN: Perspective Lens Simulator & Passage -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      
+      <!-- Canvas Simulation Player -->
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">👁️</span>
+          <span>Interactive Perspective Simulator: "Through the Fog"</span>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="povCanvas" width="600" height="280"></canvas>
+        </div>
+
+        <div class="player-controls">
+          <button class="btn" id="playBtn" onclick="togglePlay()">Play Perspective</button>
+          <div class="progress-bar-wrap" onclick="seekVideo(event)">
+            <div class="progress-bar-fill" id="progressFill"></div>
+          </div>
+          <div class="time-display" id="timeDisplay">0:00 / 1:20</div>
+        </div>
+
+        <div class="chapter-pills">
+          <span class="chapter-pill active" onclick="jumpToTime(0)">0:00 - Dense Fog (Limited Sight)</span>
+          <span class="chapter-pill" onclick="jumpToTime(20)">0:20 - Misjudging the Shadow</span>
+          <span class="chapter-pill" onclick="jumpToTime(40)">0:40 - The Truth Revealed</span>
+          <span class="chapter-pill" onclick="jumpToTime(60)">1:00 - Reflection & Growth</span>
+        </div>
+      </div>
+
+      <!-- Literary Passage Reader -->
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">📖</span>
+          <span>Literary Text: "Through the Fog"</span>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+          Click on any highlighted text to see how the author explicitly develops Leo's point of view.
+        </p>
+
+        <div class="passage-box">
+          <p>
+            <strong>Paragraph 1:</strong> <span class="pov-tag tag-first-person">1st Person Narrator (Leo)</span> <span class="highlight-pov" onclick="explainPOV(1)">My heart hammered against my ribs like a trapped bird as I peered through the thick gray mist along the cliff edge.</span> I couldn't see more than five feet ahead, and every creak of the damp pine trees sounded like an approaching predator.
+          </p>
+          <p>
+            <strong>Paragraph 2:</strong> Suddenly, a massive shadow loomed ahead on the narrow path. <span class="highlight-pov" onclick="explainPOV(2)">"Stay back!" I shouted, assuming it was the rogue mountain bear the park ranger had warned us about earlier. I reached frantically for my signal whistle, convinced we were about to be attacked.</span>
+          </p>
+          <p>
+            <strong>Paragraph 3:</strong> The shadow shifted, and a familiar voice called out, "Leo? Calm down, it's just me!" As the mist parted, I saw Captain Vance holding a large solar lantern, not a wild beast.
+          </p>
+          <p>
+            <strong>Paragraph 4:</strong> <span class="highlight-pov" onclick="explainPOV(3)">A rush of embarrassment washed over me, hot and stinging. I realized my fear had turned a harmless rescue officer into a monster in my mind.</span> "I thought... I thought you were danger," I stammered.
+          </p>
+          <p>
+            <strong>Paragraph 5:</strong> Captain Vance chuckled softly, setting the lantern down. "Fear plays tricks on your eyes when you're caught in a canyon fog, son. The important thing is you stayed on the path." <span class="highlight-pov" onclick="explainPOV(4)">Taking a deep breath, I understood that seeing clearly isn't just about your eyes—it's about keeping your composure when panic takes over.</span>
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: Point of View Organizer & Practice Quiz -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+
+      <!-- POV Development Organizer -->
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🔍</span>
+          <span>How the Author Develops Point of View</span>
+        </div>
+
+        <div class="organizer-container">
+          
+          <div class="organizer-card">
+            <h5>1. Internal Monologue & Thoughts</h5>
+            <p>The author gives us direct access to Leo's panic ("heart hammered", "convinced we were about to be attacked"), showing his internal fear driving his actions.</p>
+          </div>
+
+          <div class="organizer-card">
+            <h5>2. Sensory Details & Limited Perception</h5>
+            <p>Because the story is in 1st Person, the reader only sees what Leo sees through the fog (5 feet ahead), creating suspense and shared misunderstanding.</p>
+          </div>
+
+          <div class="organizer-card">
+            <h5>3. Contrast Between Perception vs. Reality</h5>
+            <p>The author contrasts Leo's terrifying perception (a monster/bear) with objective reality (Captain Vance with a lantern) to reveal Leo's emotional bias.</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- State Assessment Practice Questions -->
+      <div class="card">
+        <div class="quiz-nav">
+          <span style="font-weight: 700; font-size: 1rem;">Florida B.E.S.T. Assessment Practice</span>
+          <span class="score-badge" id="scoreDisplay">Score: 0 / 8</span>
+        </div>
+
+        <div id="quizContainer">
+          <!-- Question cards injected by JavaScript -->
+        </div>
+
+        <div class="pagination">
+          <button class="btn btn-secondary" id="prevBtn" onclick="navigateQuiz(-1)" disabled>Previous</button>
+          <span id="quizProgress" style="align-self: center; font-size: 0.85rem; color: var(--text-muted);">Question 1 of 8</span>
+          <button class="btn" id="nextBtn" onclick="navigateQuiz(1)">Next Question</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    /* ==========================================
+       1. PERSPECTIVE SIMULATOR CANVAS
+       ========================================== */
+    const canvas = document.getElementById('povCanvas');
+    const ctx = canvas.getContext('2d');
+    let currentTime = 0;
+    const totalTime = 80;
+    let isPlaying = false;
+    let animInterval = null;
+
+    function drawScene() {
+      // Clear background
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Split View: Left = Narrator POV (Foggy), Right = Objective Reality (Clear)
+      // Left Side (Leo's View)
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, 0, 300, 280);
+      ctx.clip();
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, 300, 280);
+      
+      // Fog overlay on Left
+      let fogAlpha = currentTime < 40 ? 0.85 : 0.2;
+      ctx.fillStyle = `rgba(148, 163, 184, ${fogAlpha})`;
+      ctx.fillRect(0, 0, 300, 280);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 12px system-ui';
+      ctx.fillText("NARRATOR'S POV (LIMITED & FEARFUL)", 10, 20);
+
+      if (currentTime < 40) {
+        // Shadow Monster
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(180, 160, 40, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ef4444';
+        ctx.fillText('⚡ Threat / Bear?', 150, 100);
+      } else {
+        // Revealed Ranger
+        ctx.fillStyle = '#6366f1';
+        ctx.beginPath();
+        ctx.arc(180, 160, 20, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#a5b4fc';
+        ctx.fillText('Captain Vance', 150, 120);
+      }
+      ctx.restore();
+
+      // Divider Line
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(300, 0);
+      ctx.lineTo(300, 280);
+      ctx.stroke();
+
+      // Right Side (Objective Reality)
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(300, 0, 300, 280);
+      ctx.clip();
+      ctx.fillStyle = '#0284c7';
+      ctx.fillRect(300, 0, 300, 280);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 12px system-ui';
+      ctx.fillText("OBJECTIVE REALITY (CLEAR LENS)", 310, 20);
+
+      // Ranger with lantern
+      ctx.fillStyle = '#6366f1';
+      ctx.beginPath();
+      ctx.arc(450, 160, 20, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Glowing Lantern
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.arc(480, 160, 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillText('Rescue Lantern', 440, 120);
+
+      ctx.restore();
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      document.getElementById('playBtn').innerText = isPlaying ? 'Pause Perspective' : 'Play Perspective';
+      if (isPlaying) {
+        animInterval = setInterval(() => {
+          currentTime += 0.5;
+          if (currentTime > totalTime) currentTime = 0;
+          updatePlayerUI();
+        }, 100);
+      } else {
+        clearInterval(animInterval);
+      }
+    }
+
+    function jumpToTime(t) {
+      currentTime = t;
+      updatePlayerUI();
+    }
+
+    function seekVideo(e) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const pos = (e.clientX - rect.left) / rect.width;
+      currentTime = pos * totalTime;
+      updatePlayerUI();
+    }
+
+    function updatePlayerUI() {
+      document.getElementById('progressFill').style.width = `${(currentTime / totalTime) * 100}%`;
+      let mins = Math.floor(currentTime / 60);
+      let secs = Math.floor(currentTime % 60).toString().padStart(2, '0');
+      document.getElementById('timeDisplay').innerText = `${mins}:${secs} / 1:20`;
+      
+      const pills = document.querySelectorAll('.chapter-pill');
+      pills.forEach((pill, idx) => {
+        let times = [0, 20, 40, 60];
+        if (currentTime >= times[idx] && (idx === times.length - 1 || currentTime < times[idx + 1])) {
+          pill.classList.add('active');
+        } else {
+          pill.classList.remove('active');
+        }
+      });
+
+      drawScene();
+    }
+
+    drawScene();
+
+    /* ==========================================
+       2. INTERACTIVE PASSAGE EXPLANATION
+       ========================================== */
+    function explainPOV(id) {
+      const explanations = {
+        1: "DEVELOPMENT: The author uses internal sensory details ('heart hammered', 'trapped bird') to immediately establish Leo's fearful point of view and physical vulnerability.",
+        2: "DEVELOPMENT: The author shows Leo's limited first-person perspective. Because he cannot see through the mist, his fear causes him to misinterpret a harmless rescue officer as a wild predator.",
+        3: "DEVELOPMENT: The author develops Leo's point of view by describing his internal emotional change from extreme panic to hot embarrassment upon realizing his mistake.",
+        4: "DEVELOPMENT: The story ends with Leo's internal reflection, demonstrating how his perspective has matured from blind panic to self-awareness."
+      };
+      alert(explanations[id]);
+    }
+
+    /* ==========================================
+       3. FLORIDA B.E.S.T. QUESTIONS DATA & ENGINE
+       ========================================== */
+    const quizData = [
+      {
+        id: 1,
+        question: "How does the author primarily develop Leo's point of view in Paragraph 1?",
+        options: [
+          "A. By giving an objective, third-person summary of weather conditions along the coast.",
+          "B. By describing Leo's internal physical reactions and fearful thoughts in the first person.",
+          "C. By providing dialogue from Captain Vance warning Leo about cliff dangers.",
+          "D. By comparing Leo's climbing skills to those of experienced park rangers."
+        ],
+        correct: 1,
+        rationale: "Correct! Standard ELA.6.R.1.3 focuses on how the author develops point of view. In Paragraph 1, the author uses first-person sensory language ('My heart hammered') to reveal Leo's internal fear."
+      },
+      {
+        id: 2,
+        question: "This question has two parts. First, answer Part A. Then, answer Part B.\n\nPart A: Which statement best describes how Leo's perspective affects his understanding of events in Paragraph 2?",
+        options: [
+          "A. His limited vision and heightened fear lead him to misinterpret a rescuer as a dangerous animal.",
+          "B. His knowledge of wildlife allows him to identify the bear instantly.",
+          "C. His trust in Captain Vance makes him feel completely safe despite the fog.",
+          "D. His anger at the weather leads him to abandon the trail."
+        ],
+        correct: 0,
+        rationale: "Correct! Leo's panic and limited first-person vision cause him to perceive a harmless shadow as a wild beast."
+      },
+      {
+        id: 3,
+        question: "Part B: Which quote from the passage best supports the answer to Part A?",
+        options: [
+          "A. 'The sun dipped below the jagged rim of Echo Canyon.'",
+          "B. '...assuming it was the rogue mountain bear... convinced we were about to be attacked.'",
+          "C. 'Captain Vance chuckled softly, setting the lantern down.'",
+          "D. 'I couldn't see more than five feet ahead...'"
+        ],
+        correct: 1,
+        rationale: "Correct! This quote explicitly proves that Leo's internal fear drove his false assumption that a bear was attacking him."
+      },
+      {
+        id: 4,
+        question: "How does the first-person point of view create suspense for the reader in Paragraphs 1 and 2?",
+        options: [
+          "A. The reader knows Captain Vance is approaching, but Leo does not.",
+          "B. The reader only knows as much as Leo does, sharing his confusion and panic in the dark fog.",
+          "C. The reader is told the exact outcome of the story in the opening line.",
+          "D. The reader gets to read Captain Vance's private thoughts."
+        ],
+        correct: 1,
+        rationale: "Correct! In first-person limited narration, the reader's view is restricted to the narrator's perceptions, creating suspense because we don't know what lurks in the fog either."
+      },
+      {
+        id: 5,
+        question: "How does the author show a shift in Leo's point of view in Paragraph 4?",
+        options: [
+          "A. By describing his physical transition from running to jumping across the rocks.",
+          "B. By contrasting his initial terror with the stinging embarrassment of recognizing his mistake.",
+          "C. By showing that he becomes angry with Captain Vance for scaring him.",
+          "D. By having him decide to leave the mountain immediately."
+        ],
+        correct: 1,
+        rationale: "Correct! The author develops the POV shift by describing Leo's internal emotional shift from sheer terror to embarrassment upon realizing the 'monster' was Captain Vance."
+      },
+      {
+        id: 6,
+        question: "What does the phrase 'fear plays tricks on your eyes' in Paragraph 5 help the reader understand about Leo's perspective?",
+        options: [
+          "A. Leo has eye problems that require glasses in fog.",
+          "B. Emotional panic can distort a person's perception of real-world events.",
+          "C. Captain Vance was intentionally trying to trick Leo with light.",
+          "D. The fog was caused by artificial smoke on the trail."
+        ],
+        correct: 1,
+        rationale: "Correct! Captain Vance's statement explains the core theme of perspective: fear alters how a narrator interprets reality."
+      },
+      {
+        id: 7,
+        question: "How would the story be different if it were told from a Third-Person Omniscient point of view?",
+        options: [
+          "A. Leo would not be present in the canyon at all.",
+          "B. The reader would know Captain Vance was carrying a lantern before Leo realized it, removing the mystery of the shadow.",
+          "C. The story would take place in a desert instead of a foggy canyon.",
+          "D. Leo's feelings would remain completely unknown to the reader."
+        ],
+        correct: 1,
+        rationale: "Correct! An omniscient narrator knows all characters' positions and thoughts, which would reveal Captain Vance's identity instantly and eliminate the suspense caused by Leo's limited view."
+      },
+      {
+        id: 8,
+        question: "Which detail best demonstrates how the author develops Leo's point of view through internal monologue?",
+        options: [
+          "A. The height of the canyon pine trees.",
+          "B. Leo's realization that 'seeing clearly isn't just about your eyes—it's about keeping your composure.'",
+          "C. The color of Captain Vance's solar lantern.",
+          "D. The distance of five feet visible along the cliff."
+        ],
+        correct: 1,
+        rationale: "Correct! Internal reflection at the end of a story shows how the narrator's perspective and understanding have evolved."
+      }
+    ];
+
+    let currentQuestionIdx = 0;
+    let userAnswers = new Array(quizData.length).fill(null);
+
+    function renderQuestion(idx) {
+      const q = quizData[idx];
+      const container = document.getElementById('quizContainer');
+      
+      let optionsHTML = q.options.map((opt, oIdx) => {
+        let btnClass = 'option-btn';
+        if (userAnswers[idx] !== null) {
+          if (oIdx === q.correct) btnClass += ' correct';
+          else if (oIdx === userAnswers[idx]) btnClass += ' incorrect';
+        }
+        return `<button class="${btnClass}" onclick="selectAnswer(${idx}, ${oIdx})" ${userAnswers[idx] !== null ? 'disabled' : ''}>${opt}</button>`;
+      }).join('');
+
+      let rationaleClass = 'rationale-box';
+      if (userAnswers[idx] !== null) {
+        rationaleClass += ' visible ' + (userAnswers[idx] === q.correct ? 'correct' : 'incorrect');
+      }
+
+      container.innerHTML = `
+        <div class="question-card">
+          <div class="question-text">Q${idx + 1}. ${q.question.replace(/\n/g, '<br>')}</div>
+          <div class="options-grid">${optionsHTML}</div>
+          <div class="${rationaleClass}">${q.rationale}</div>
+        </div>
+      `;
+
+      document.getElementById('prevBtn').disabled = idx === 0;
+      document.getElementById('nextBtn').disabled = idx === quizData.length - 1;
+      document.getElementById('quizProgress').innerText = `Question ${idx + 1} of ${quizData.length}`;
+      updateScoreDisplay();
+    }
+
+    function selectAnswer(qIdx, oIdx) {
+      userAnswers[qIdx] = oIdx;
+      renderQuestion(qIdx);
+    }
+
+    function navigateQuiz(dir) {
+      currentQuestionIdx += dir;
+      renderQuestion(currentQuestionIdx);
+    }
+
+    function updateScoreDisplay() {
+      let score = userAnswers.reduce((acc, ans, idx) => {
+        return ans === quizData[idx].correct ? acc + 1 : acc;
+      }, 0);
+      document.getElementById('scoreDisplay').innerText = `Score: ${score} / ${quizData.length}`;
+    }
+
+    renderQuestion(0);
+  </script>
+</body>
+</html>
